@@ -1,0 +1,27 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
+@import "tailwindcss";
+
+@theme {
+    --font-principal: "Inter", sans-serif;
+
+    --color-azul-primario: #071e54;
+    --color-ciano-acento: #01c0fb;
+    --color-texto-base: #1F2937;
+    --color-fundo-claro: #F9FAFB;
+    --color-fundo-claro-alt: #F4F4F9;
+    --color-borda-suave: #D1D5DB;
+    --color-sucesso-destaque: #84CC16;
+    --color-sucesso-destaque-alt: #04724D;
+}
+
+:root {
+    font-family: var(--font-principal);
+    color: var(--color-texto-base);
+    
+    background-color: var(--color-fundo-claro);
+    button {
+        &:hover {
+            cursor: pointer;
+        }
+    }
+}
