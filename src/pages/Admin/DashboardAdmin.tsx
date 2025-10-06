@@ -19,7 +19,9 @@ interface Funcionario {
   nome: string;
   cpf: string;
   cargo: string;
+  cargaHorariaDiaria: number;
 }
+
 
 type AcaoConfirmacao = "salvar" | "excluir" | null;
 
@@ -30,7 +32,13 @@ const CadastroFuncionarios: React.FC = () => {
   const [mensagemConfirmacao, setMensagemConfirmacao] = useState("");
   const [editandoFuncionario, setEditandoFuncionario] =
     useState<Funcionario | null>(null);
-  const [form, setForm] = useState({ nome: "", cpf: "", cargo: "" });
+  const [form, setForm] = useState({
+  nome: "",
+  cpf: "",
+  cargo: "",
+  cargaHorariaDiaria: 8,
+});
+
   const [erros, setErros] = useState<string[]>([]);
   const [acaoConfirmacao, setAcaoConfirmacao] = useState<AcaoConfirmacao>(null);
   const [funcionarioIdAlvo, setFuncionarioIdAlvo] = useState<number | null>(
@@ -46,10 +54,10 @@ const CadastroFuncionarios: React.FC = () => {
   const abrirModalCadastro = (func?: Funcionario) => {
     if (func) {
       setEditandoFuncionario(func);
-      setForm({ nome: func.nome, cpf: func.cpf, cargo: func.cargo });
+      setForm({ nome: func.nome, cpf: func.cpf, cargo: func.cargo, cargaHorariaDiaria: func.cargaHorariaDiaria });
     } else {
       setEditandoFuncionario(null);
-      setForm({ nome: "", cpf: "", cargo: "" });
+      setForm({ nome: "", cpf: "", cargo: "", cargaHorariaDiaria: 8 });
     }
     setModalAberto(true);
   };
@@ -146,12 +154,12 @@ const CadastroFuncionarios: React.FC = () => {
 
   /** FILTRAGEM DE FUNCIONÁRIOS */
   const funcionariosFiltrados = funcionarios.filter((f) =>
-    f.nome.toLowerCase().includes(termoBusca.toLowerCase())
+    f.nome.toLowerCase().includes(termoBusca.toLowerCase()) ||
+    f.cpf.replace(/\D/g, "").includes(termoBusca.replace(/\D/g, ""))
   );
 
   return (
     <div className="flex min-h-screen bg-[var(--color-fundo-claro)]">
-      {/* Menu lateral */}
       {/* Menu lateral */}
       <aside className="w-64 bg-[var(--color-azul-primario)] text-white flex flex-col justify-between">
         <div>
@@ -245,6 +253,7 @@ const CadastroFuncionarios: React.FC = () => {
                   <th className="py-2 px-4">Nome</th>
                   <th className="py-2 px-4">CPF</th>
                   <th className="py-2 px-4">Cargo</th>
+                  <th className="py-2 px-4">Carga Horária</th>
                   <th className="py-2 px-4">Ações</th>
                 </tr>
               </thead>
@@ -257,6 +266,7 @@ const CadastroFuncionarios: React.FC = () => {
                     <td className="py-2 px-4">{f.nome}</td>
                     <td className="py-2 px-4">{f.cpf}</td>
                     <td className="py-2 px-4">{f.cargo}</td>
+                    <td className="py-2 px-4">{f.cargaHorariaDiaria}</td>
                     <td className="py-2 px-4 flex gap-2">
                       <button
                         onClick={() => abrirModalCadastro(f)}
@@ -298,6 +308,7 @@ const CadastroFuncionarios: React.FC = () => {
                 nome: funcionarioAlvo.nome,
                 cpf: funcionarioAlvo.cpf,
                 cargo: funcionarioAlvo.cargo,
+                cargaHorariaDiaria: funcionarioAlvo.cargaHorariaDiaria,
               }
             : undefined
         }

@@ -4,6 +4,7 @@ interface FuncionarioInfo {
   nome: string;
   cpf: string;
   cargo: string;
+  cargaHorariaDiaria: number;
 }
 
 interface ConfirmacaoFuncionarioModalProps {
@@ -15,7 +16,9 @@ interface ConfirmacaoFuncionarioModalProps {
   mostrarConfirmar?: boolean; // se true mostra botão confirmar
 }
 
-const ConfirmacaoFuncionarioModal: React.FC<ConfirmacaoFuncionarioModalProps> = ({
+const ConfirmacaoFuncionarioModal: React.FC<
+  ConfirmacaoFuncionarioModalProps
+> = ({
   aberto,
   mensagem,
   funcionario,
@@ -34,9 +37,18 @@ const ConfirmacaoFuncionarioModal: React.FC<ConfirmacaoFuncionarioModalProps> = 
         {/* Informações do funcionário, se fornecidas */}
         {funcionario && (
           <div className="w-full bg-gray-100 rounded-lg p-4 mb-4 text-gray-700 text-sm">
-            <p><strong>Nome:</strong> {funcionario.nome}</p>
-            <p><strong>CPF:</strong> {funcionario.cpf}</p>
-            <p><strong>Cargo:</strong> {funcionario.cargo}</p>
+            <p>
+              <strong>Nome:</strong> {funcionario.nome}
+            </p>
+            <p>
+              <strong>CPF:</strong> {funcionario.cpf}
+            </p>
+            <p>
+              <strong>Cargo:</strong> {funcionario.cargo}
+            </p>
+            <p>
+              <strong>Carga Horária:</strong> {funcionario.cargaHorariaDiaria}h/dia
+            </p>
           </div>
         )}
 

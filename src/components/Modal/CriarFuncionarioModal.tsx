@@ -7,8 +7,15 @@ interface CriarFuncionarioModalProps {
   onFechar: () => void;
   onSalvar: () => void;
   editando: boolean;
-  form: { nome: string; cpf: string; cargo: string };
-  setForm: React.Dispatch<React.SetStateAction<{ nome: string; cpf: string; cargo: string }>>;
+  form: { nome: string; cpf: string; cargo: string; cargaHorariaDiaria: number };
+  setForm: React.Dispatch<
+    React.SetStateAction<{
+      nome: string;
+      cpf: string;
+      cargo: string;
+      cargaHorariaDiaria: number;
+    }>
+  >;
   erros: string[];
 }
 
@@ -34,10 +41,6 @@ const CriarFuncionarioModal: React.FC<CriarFuncionarioModalProps> = ({
           <XCircle className="w-6 h-6" />
         </button>
 
-        <div>
-          
-        </div>
-
         {/* Título */}
         <h2 className="text-2xl font-semibold mb-6 text-gray-800">
           {editando ? "Editar Funcionário" : "Cadastrar Funcionário"}
@@ -56,35 +59,77 @@ const CriarFuncionarioModal: React.FC<CriarFuncionarioModalProps> = ({
 
         {/* Formulário */}
         <div className="flex flex-col gap-4">
-          <input
-            type="text"
-            placeholder="Nome"
-            value={form.nome}
-            maxLength={50}
-            onChange={(e) => setForm({ ...form, nome: e.target.value })}
-            className="border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
-          />
-          <input
-            type="text"
-            placeholder="CPF"
-            value={form.cpf}
-            maxLength={14}
-            onChange={(e) => setForm({ ...form, cpf: formatarCPF(e.target.value)})}
-            className="border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
-          />
-          <input
-            type="text"
-            placeholder="Cargo/Função"
-            value={form.cargo}
-            maxLength={30}
-            onChange={(e) => setForm({ ...form, cargo: e.target.value })}
-            className="border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
-          />
+          {/* Nome */}
+          <div className="flex flex-col">
+            <label className="text-sm font-semibold text-gray-700 mb-1">
+              Nome do Funcionário
+            </label>
+            <input
+              type="text"
+              placeholder="Ex: João Silva"
+              value={form.nome}
+              maxLength={50}
+              onChange={(e) => setForm({ ...form, nome: e.target.value })}
+              className="border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
+            />
+          </div>
+
+          {/* CPF */}
+          <div className="flex flex-col">
+            <label className="text-sm font-semibold text-gray-700 mb-1">
+              CPF
+            </label>
+            <input
+              type="text"
+              placeholder="000.000.000-00"
+              value={form.cpf}
+              maxLength={14}
+              onChange={(e) =>
+                setForm({ ...form, cpf: formatarCPF(e.target.value) })
+              }
+              className="border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
+            />
+          </div>
+
+          {/* Cargo */}
+          <div className="flex flex-col">
+            <label className="text-sm font-semibold text-gray-700 mb-1">
+              Cargo / Função
+            </label>
+            <input
+              type="text"
+              placeholder="Ex: Operador de Máquina"
+              value={form.cargo}
+              maxLength={30}
+              onChange={(e) => setForm({ ...form, cargo: e.target.value })}
+              className="border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
+            />
+          </div>
+
+          {/* Carga Horária */}
+          <div className="flex flex-col">
+            <label className="text-sm font-semibold text-gray-700 mb-1">
+              Carga Horária Diária (em horas)
+            </label>
+            <input
+              type="number"
+              value={form.cargaHorariaDiaria}
+              min={1}
+              max={12}
+              onChange={(e) =>
+                setForm({
+                  ...form,
+                  cargaHorariaDiaria: Number(e.target.value),
+                })
+              }
+              className="border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
+            />
+          </div>
 
           {/* Botão salvar */}
           <button
             onClick={onSalvar}
-            className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-3 rounded-xl shadow-md hover:shadow-lg transition-all duration-200"
+            className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-3 rounded-xl shadow-md hover:shadow-lg transition-all duration-200 mt-2"
           >
             {editando ? "Salvar Alterações" : "Cadastrar"}
           </button>
