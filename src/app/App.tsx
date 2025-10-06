@@ -8,8 +8,7 @@ import DashboardFuncionario from "../pages/Funcionario/DashboardFuncionario";
 
 // 👨‍💼 Administrador
 import DashboardAdmin from "../pages/Admin/DashboardAdmin";
-// import FuncionariosAdmin from "../pages/Admin/FuncionariosAdmin"; // COMENTADO
-// import RelatoriosAdmin from "../pages/Admin/RelatoriosAdmin"; // COMENTADO
+import RelatoriosAdmin from "../pages/Admin/RelatoriosAdmin";
 
 // ⚙️ Rotas de segurança
 // import PrivateRoute from "../routes/PrivateRoute"; // COMENTADO
@@ -81,29 +80,18 @@ const router = createBrowserRouter([
           //</AdminRoute>
         
       ),
-    }
-    ]
-  }
-      /*
-      },
-      {
-        path: "/admin/funcionarios",
-        element: (
-          <AdminRoute>
-            <FuncionariosAdmin />
-          </AdminRoute>
-        ),
-      },
-      {
+    },
+    {
         path: "/admin/relatorios",
         element: (
-          <AdminRoute>
+          //<AdminRoute>
             <RelatoriosAdmin />
-          </AdminRoute>
+          //</AdminRoute>
         ),
       },
-    ],
-  },
+    ]
+  }
+  /*
   // ===========================
   // PÁGINAS DE ERRO (COMENTADO)
   // ===========================
