@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { UserCog, Library, LogOut, Menu } from "lucide-react";
-import AquicobLogo from "../../assets/AquicobLogo.png";
+import AquicobLogo from "../../assets/aquicobLogo.png";
 
 import type { DiaMarcacoes, Funcionario, Marcacao } from "../../types";
 import { gerarRelatorio } from "../../utils/RelatorioUtils";

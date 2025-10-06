@@ -1,6 +1,6 @@
 import React from 'react';
 import { UserCog, Library, LogOut} from 'lucide-react';
-import AquicobLogo from '../../assets/AquicobLogo.png';
+import AquicobLogo from "../../assets/aquicobLogo.png";
 import { useNavigate } from 'react-router-dom';
 
 interface AdminSidebarProps {
