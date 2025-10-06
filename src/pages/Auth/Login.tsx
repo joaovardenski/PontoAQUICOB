@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Lock, User, LogIn, Eye, EyeOff } from "lucide-react";
 import AquicobLogo from "../../assets/aquicobLogo.png";
 import { validarLogin } from "../../utils/AuthValidators";
@@ -19,6 +20,7 @@ const Login: React.FC = () => {
   const [mostrarSenha, setMostrarSenha] = useState(false);
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState<{ cpf?: string; senha?: string }>({});
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (!errors.cpf && !errors.senha) return;
@@ -56,6 +58,7 @@ const Login: React.FC = () => {
     setLoading(true);
     await new Promise((resolve) => setTimeout(resolve, 2000));
     setLoading(false);
+    navigate("/funcionario");
   };
 
   return (

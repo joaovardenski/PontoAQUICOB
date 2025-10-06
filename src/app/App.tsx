@@ -2,15 +2,12 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 
 // 🔐 Autenticação
 import Login from "../pages/Auth/Login";
-// import RecoverPassword from "../pages/Auth/RecoverPassword"; // COMENTADO
 
 // 🧍 Funcionário
-// import DashboardFuncionario from "../pages/Funcionario/DashboardFuncionario"; // COMENTADO
-// import HistoricoFuncionario from "../pages/Funcionario/HistoricoFuncionario"; // COMENTADO
-// import PerfilFuncionario from "../pages/Funcionario/PerfilFuncionario"; // COMENTADO
+import DashboardFuncionario from "../pages/Funcionario/DashboardFuncionario";
 
 // 👨‍💼 Administrador
-// import DashboardAdmin from "../pages/Admin/DashboardAdmin"; // COMENTADO
+import DashboardAdmin from "../pages/Admin/DashboardAdmin";
 // import FuncionariosAdmin from "../pages/Admin/FuncionariosAdmin"; // COMENTADO
 // import RelatoriosAdmin from "../pages/Admin/RelatoriosAdmin"; // COMENTADO
 
@@ -30,12 +27,10 @@ const router = createBrowserRouter([
     element: <Login />, // Esta é a rota que funciona!
   },
 
-  /*
-  // Recuperação de senha (COMENTADO PARA EVITAR ERRO DE REFERÊNCIA)
-  {
-    path: "/recuperar-senha",
-    element: <RecoverPassword />, 
-  },
+  //{
+  //  path: "/recuperar-senha",
+  //  element: <RecoverPassword />,
+  //},
   // ===========================
   // ÁREA DO FUNCIONÁRIO (COMENTADO)
   // ===========================
@@ -45,11 +40,14 @@ const router = createBrowserRouter([
       {
         index: true,
         element: (
-          <PrivateRoute>
-            <DashboardFuncionario />
-          </PrivateRoute>
+          //<PrivateRoute>
+          <DashboardFuncionario />
+          //</PrivateRoute>
         ),
       },
+    ],
+  },
+  /*
       {
         path: "/funcionario/historico",
         element: (
@@ -68,6 +66,7 @@ const router = createBrowserRouter([
       },
     ],
   },
+  */
   // ===========================
   // ÁREA ADMINISTRATIVA (COMENTADO)
   // ===========================
@@ -77,10 +76,15 @@ const router = createBrowserRouter([
       {
         index: true,
         element: (
-          <AdminRoute>
+          //<AdminRoute>
             <DashboardAdmin />
-          </AdminRoute>
-        ),
+          //</AdminRoute>
+        
+      ),
+    }
+    ]
+  }
+      /*
       },
       {
         path: "/admin/funcionarios",
