@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { useClock } from "../../hooks/useClock";
 import { usePontos } from "../../hooks/usePontos";
 import type { Ponto } from "../../hooks/usePontos";
-import AquicobLogo from "../../assets/AquicobLogo.png";
+import AquicobLogo from "../../assets/aquicobLogo.png";
 import RegistroButton from "../../components/Funcionario/RegistroButton";
 import ModalConfirmacaoPonto from "../../components/Modal/ConfirmacaoPontoModal";
 import FeedbackModal from "../../components/Modal/FeedbackModal";
