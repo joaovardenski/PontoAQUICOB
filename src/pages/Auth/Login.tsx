@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Lock, User, LogIn, Eye, EyeOff } from "lucide-react";
-import AquicobLogo from "../../assets/AquicobLogo.png";
+import AquicobLogo from "../../assets/aquicobLogo.png";
 import { validarLogin } from "../../utils/AuthValidators";
 import { formatarCPF } from "../../utils/MaskUtils";
 import AuthInputField from "../../components/Auth/AuthInputField";
