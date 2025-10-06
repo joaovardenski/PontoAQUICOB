@@ -34,15 +34,12 @@ const ModalConfirmacaoPonto: React.FC<ModalConfirmacaoPontoProps> = ({
   return (
     <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
       <div className="bg-white rounded-2xl shadow-xl p-6 sm:p-8 w-[90%] max-w-sm text-center animate-fade-in">
-        {/* Ícone */}
         <div className="flex justify-center">{getIcon()}</div>
 
-        {/* Mensagem */}
         <h2 className="text-lg sm:text-xl font-semibold text-gray-800 mb-6">
           {message}
         </h2>
 
-        {/* Botões */}
         <div className="flex justify-center gap-4">
           <button
             onClick={onClose}

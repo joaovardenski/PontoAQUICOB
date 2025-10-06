@@ -1,38 +1,18 @@
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 
-// 🔐 Autenticação
 import Login from "../pages/Auth/Login";
-
-// 🧍 Funcionário
 import DashboardFuncionario from "../pages/Funcionario/DashboardFuncionario";
-
-// 👨‍💼 Administrador
 import DashboardAdmin from "../pages/Admin/DashboardAdmin";
 import RelatoriosAdmin from "../pages/Admin/RelatoriosAdmin";
+// import PrivateRoute from "../routes/PrivateRoute";
+// import AdminRoute from "../routes/AdminRoute";
 
-// ⚙️ Rotas de segurança
-// import PrivateRoute from "../routes/PrivateRoute"; // COMENTADO
-// import AdminRoute from "../routes/AdminRoute"; // COMENTADO
-
-// 🚫 Páginas de erro
-// import Unauthorized from "../pages/Error/Unauthorized"; // COMENTADO
-// import NotAuthenticated from "../pages/Error/NotAuthenticated"; // COMENTADO
-// import NotFound from "../pages/Error/NotFound"; // COMENTADO
 
 const router = createBrowserRouter([
-  // Página inicial → Login
   {
     path: "/",
-    element: <Login />, // Esta é a rota que funciona!
+    element: <Login />,
   },
-
-  //{
-  //  path: "/recuperar-senha",
-  //  element: <RecoverPassword />,
-  //},
-  // ===========================
-  // ÁREA DO FUNCIONÁRIO (COMENTADO)
-  // ===========================
   {
     path: "/funcionario",
     children: [
@@ -46,29 +26,6 @@ const router = createBrowserRouter([
       },
     ],
   },
-  /*
-      {
-        path: "/funcionario/historico",
-        element: (
-          <PrivateRoute>
-            <HistoricoFuncionario />
-          </PrivateRoute>
-        ),
-      },
-      {
-        path: "/funcionario/perfil",
-        element: (
-          <PrivateRoute>
-            <PerfilFuncionario />
-          </PrivateRoute>
-        ),
-      },
-    ],
-  },
-  */
-  // ===========================
-  // ÁREA ADMINISTRATIVA (COMENTADO)
-  // ===========================
   {
     path: "/admin",
     children: [
@@ -91,23 +48,6 @@ const router = createBrowserRouter([
       },
     ]
   }
-  /*
-  // ===========================
-  // PÁGINAS DE ERRO (COMENTADO)
-  // ===========================
-  {
-    path: "/unauthorized",
-    element: <Unauthorized />,
-  },
-  {
-    path: "/not-authenticated",
-    element: <NotAuthenticated />,
-  },
-  {
-    path: "*",
-    element: <NotFound />,
-  },
-  */
 ]);
 
 function App() {

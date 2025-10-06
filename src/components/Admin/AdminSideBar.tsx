@@ -1,6 +1,6 @@
 import React from 'react';
 import { UserCog, Library, LogOut} from 'lucide-react';
-import AquicobLogo from '../assets/AquicobLogo.png';
+import AquicobLogo from '../../assets/AquicobLogo.png';
 import { useNavigate } from 'react-router-dom';
 
 interface AdminSidebarProps {
@@ -18,12 +18,11 @@ const AdminSidebar: React.FC<AdminSidebarProps> = ({
 
   const handleNavigation = (path: string) => {
     navigate(path);
-    setIsMobileMenuOpen(false); // Fecha o menu no mobile após navegar
+    setIsMobileMenuOpen(false);
   };
 
   return (
     <>
-      {/* Fundo escuro para o menu mobile (Overlay) */}
       {isMobileMenuOpen && (
         <div
           className="fixed inset-0 bg-black opacity-50 md:hidden z-20"
@@ -31,7 +30,6 @@ const AdminSidebar: React.FC<AdminSidebarProps> = ({
         ></div>
       )}
 
-      {/* Sidebar (Desktop e Mobile Drawer) */}
       <aside
         className={`fixed inset-y-0 left-0 z-30 w-64 bg-[var(--color-azul-primario)] text-white flex-col justify-between transition-transform duration-300 ease-in-out ${
           isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'
@@ -46,7 +44,6 @@ const AdminSidebar: React.FC<AdminSidebarProps> = ({
             />
           </div>
           <nav className="flex flex-col mt-6 flex-grow">
-            {/* Funcionários */}
             <button
               onClick={() => handleNavigation('/admin')}
               className={`flex items-center gap-3 px-6 py-3 text-md font-semibold rounded-lg mb-2 hover:bg-blue-800 transition ${
@@ -57,7 +54,6 @@ const AdminSidebar: React.FC<AdminSidebarProps> = ({
               Funcionários
             </button>
 
-            {/* Relatórios */}
             <button
               onClick={() => handleNavigation('/admin/relatorios')}
               className={`flex items-center gap-3 px-6 py-3 text-md font-semibold rounded-lg mb-2 hover:bg-blue-800 transition ${

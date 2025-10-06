@@ -16,10 +16,9 @@ const FeedbackModal: React.FC<FeedbackModalProps> = ({
 }) => {
   const [show, setShow] = useState(false);
 
-  // Controla a animação de entrada/saída
   useEffect(() => {
     if (isOpen) setShow(true);
-    else setTimeout(() => setShow(false), 200); // tempo da transição
+    else setTimeout(() => setShow(false), 200);
   }, [isOpen]);
 
   if (!isOpen && !show) return null;

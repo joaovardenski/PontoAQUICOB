@@ -33,7 +33,6 @@ const CriarFuncionarioModal: React.FC<CriarFuncionarioModalProps> = ({
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 ">
       <div className="bg-white rounded-2xl shadow-2xl p-8 max-w-lg w-full relative animate-fadeIn">
-        {/* Botão fechar */}
         <button
           onClick={onFechar}
           className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition-colors"
@@ -41,12 +40,10 @@ const CriarFuncionarioModal: React.FC<CriarFuncionarioModalProps> = ({
           <XCircle className="w-6 h-6" />
         </button>
 
-        {/* Título */}
         <h2 className="text-2xl font-semibold mb-6 text-gray-800">
           {editando ? "Editar Funcionário" : "Cadastrar Funcionário"}
         </h2>
 
-        {/* Mensagens de erro */}
         {erros.length > 0 && (
           <div className="bg-red-100 text-red-700 p-3 rounded-lg mb-4 shadow-sm">
             <ul className="list-disc list-inside text-sm">
@@ -57,9 +54,7 @@ const CriarFuncionarioModal: React.FC<CriarFuncionarioModalProps> = ({
           </div>
         )}
 
-        {/* Formulário */}
         <div className="flex flex-col gap-4">
-          {/* Nome */}
           <div className="flex flex-col">
             <label className="text-sm font-semibold text-gray-700 mb-1">
               Nome do Funcionário
@@ -74,7 +69,6 @@ const CriarFuncionarioModal: React.FC<CriarFuncionarioModalProps> = ({
             />
           </div>
 
-          {/* CPF */}
           <div className="flex flex-col">
             <label className="text-sm font-semibold text-gray-700 mb-1">
               CPF
@@ -91,7 +85,6 @@ const CriarFuncionarioModal: React.FC<CriarFuncionarioModalProps> = ({
             />
           </div>
 
-          {/* Cargo */}
           <div className="flex flex-col">
             <label className="text-sm font-semibold text-gray-700 mb-1">
               Cargo / Função
@@ -106,7 +99,6 @@ const CriarFuncionarioModal: React.FC<CriarFuncionarioModalProps> = ({
             />
           </div>
 
-          {/* Carga Horária */}
           <div className="flex flex-col">
             <label className="text-sm font-semibold text-gray-700 mb-1">
               Carga Horária Diária (em horas)
@@ -126,7 +118,6 @@ const CriarFuncionarioModal: React.FC<CriarFuncionarioModalProps> = ({
             />
           </div>
 
-          {/* Botão salvar */}
           <button
             onClick={onSalvar}
             className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-3 rounded-xl shadow-md hover:shadow-lg transition-all duration-200 mt-2"
