@@ -66,9 +66,19 @@ const CadastroFuncionarios: React.FC = () => {
   const isCpfDuplicate = (cpf: string, id?: number) =>
     funcionarios.some((f) => cleanCpf(f.cpf) === cleanCpf(cpf) && f.id !== id);
 
-  const filteredFuncionarios = funcionarios.filter((f) =>
-    f.nome.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const filteredFuncionarios = funcionarios.filter((f) => {
+    const termo = searchTerm.toLowerCase().trim();
+
+    if (!termo) return true;
+
+    const apenasNumeros = termo.replace(/\D/g, "");
+
+    return (
+      f.nome.toLowerCase().includes(termo) ||
+      (apenasNumeros.length > 0 &&
+        f.cpf.replace(/\D/g, "").includes(apenasNumeros))
+    );
+  });
 
   const openCadastroModal = (func?: Funcionario) => {
     if (func) {
