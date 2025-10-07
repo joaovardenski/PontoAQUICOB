@@ -19,7 +19,11 @@ export const usePontos = () => {
     setRegistros([novo, ...registros]);
   };
 
-  return { registros, adicionarPonto, horasTrabalhadas };
+  const setRegistrosDoDia = (pontos: Ponto[]) => {
+    setRegistros(pontos); // seta todos os pontos de uma vez
+  };
+
+  return { registros, adicionarPonto, setRegistrosDoDia, horasTrabalhadas };
 };
 
 const calcularHorasTrabalhadas = (pontos: Ponto[]): string => {
