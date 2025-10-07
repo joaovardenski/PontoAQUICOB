@@ -21,7 +21,7 @@ const RelatorioTable: React.FC<Props> = ({ dias, funcionario }) => (
       </thead>
       <tbody>
         {dias.map((d) => {
-          const cargaMinutos = (funcionario?.cargaHorariaDiaria ?? 8) * 60;
+          const cargaMinutos = (funcionario?.carga_horaria ?? 8) * 60;
           const saldo = calcularSaldoDiaComCarga(d.batidas, cargaMinutos);
           return (
             <tr key={d.data} className="border-b hover:bg-gray-50 transition">
@@ -30,7 +30,7 @@ const RelatorioTable: React.FC<Props> = ({ dias, funcionario }) => (
                 {d.batidas.map((b) => `${b.hora} ${b.tipo}`).join(", ")}
               </td>
               <td className="py-2 px-2 sm:px-4 whitespace-nowrap">{calcularHorasDia(d.batidas)}</td>
-              <td className="py-2 px-2 sm:px-4 whitespace-nowrap">{funcionario?.cargaHorariaDiaria ?? 8}h</td>
+              <td className="py-2 px-2 sm:px-4 whitespace-nowrap">{funcionario?.carga_horaria ?? 8}h</td>
               <td className={`py-2 px-2 sm:px-4 font-semibold whitespace-nowrap ${saldo.startsWith("+") ? "text-green-600" : "text-red-600"}`}>
                 {saldo}
               </td>
