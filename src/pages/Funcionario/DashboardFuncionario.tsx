@@ -17,6 +17,7 @@ import ModalConfirmacaoPonto from "../../components/Modal/ConfirmacaoPontoModal"
 import FeedbackModal from "../../components/Modal/FeedbackModal";
 import axiosPrivate from "../../api/axiosPrivate";
 import { capitalizarPrimeiraLetra } from "../../utils/StringUtils";
+import { logout } from "../../api/authApi";
 
 const DashboardFuncionario: React.FC = () => {
   const navigate = useNavigate();
@@ -181,10 +182,7 @@ const DashboardFuncionario: React.FC = () => {
             </div>
 
             <button
-              onClick={() => {
-                localStorage.removeItem("token");
-                navigate("/");
-              }}
+              onClick={() => logout()}
               className="flex items-center gap-1 bg-red-600 hover:bg-red-700 px-3 py-2 rounded-lg text-white font-medium transition-all shadow-md"
             >
               <LogOut className="w-5 h-5" />

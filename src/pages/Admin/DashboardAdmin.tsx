@@ -25,6 +25,7 @@ export interface Funcionario {
   cpf: string;
   cargo: string;
   carga_horaria: number;
+  senha_inicial?: string;
 }
 
 type ConfirmationAction = "save" | "delete" | null;
@@ -152,21 +153,29 @@ const CadastroFuncionarios: React.FC = () => {
 
   const saveFuncionario = async () => {
     if (!selectedFuncionario) {
-      // Novo funcionário
       try {
-        await createFuncionario({
+        const response = await createFuncionario({
           nome: form.nome,
           cpf: form.cpf,
           cargo: form.cargo,
           carga_horaria: form.carga_horaria,
         });
+
+        const novoFuncionario: Funcionario = {
+          ...response.usuario,
+          senha_inicial: response.senha_inicial,
+        };
+
+        // Atualiza apenas o estado local
+        setFuncionarios((prev) => [novoFuncionario, ...prev]);
+
         openConfirmacaoModal("Funcionário cadastrado com sucesso!", null);
       } catch (error) {
         console.error("Erro ao criar funcionário:", error);
         openConfirmacaoModal("Erro ao criar funcionário!", null);
       }
     } else {
-      // Edição
+      // edição
       try {
         await updateFuncionario(selectedFuncionario.id, {
           nome: form.nome,
@@ -175,6 +184,13 @@ const CadastroFuncionarios: React.FC = () => {
           carga_horaria: form.carga_horaria,
         });
         openConfirmacaoModal("Funcionário alterado com sucesso!", null);
+
+        // Atualiza a lista local sem sobrescrever com senha perdida
+        setFuncionarios((prev) =>
+          prev.map((f) =>
+            f.id === selectedFuncionario.id ? { ...f, ...form } : f
+          )
+        );
       } catch (error) {
         console.error("Erro ao atualizar funcionário:", error);
         openConfirmacaoModal("Erro ao atualizar funcionário!", null);
@@ -182,8 +198,6 @@ const CadastroFuncionarios: React.FC = () => {
     }
 
     closeCadastroModal();
-    const data = await getFuncionarios();
-    setFuncionarios(data);
   };
 
   const requestDeleteFuncionario = (func: Funcionario) => {
@@ -232,7 +246,9 @@ const CadastroFuncionarios: React.FC = () => {
       {/* Main Content */}
       <div className="flex flex-1">
         <main className="flex-1 p-6 md:p-8 pb-20 md:pb-8">
-          <h1 className="hidden md:block text-3xl font-bold mb-6">Funcionários</h1>
+          <h1 className="hidden md:block text-3xl font-bold mb-6">
+            Funcionários
+          </h1>
 
           <button
             onClick={() => openCadastroModal()}

@@ -2,6 +2,7 @@ import React from 'react';
 import { UserCog, Library, LogOut} from 'lucide-react';
 import AquicobLogo from "../../assets/aquicobLogo.png";
 import { useNavigate } from 'react-router-dom';
+import { logout } from '../../api/authApi';
 
 interface AdminSidebarProps {
   isMobileMenuOpen: boolean;
@@ -67,7 +68,7 @@ const AdminSidebar: React.FC<AdminSidebarProps> = ({
 
           <div className="p-6 mt-auto">
             <button
-              onClick={() => navigate('/')}
+              onClick={() => logout()}
               className="flex items-center justify-center w-full gap-3 px-6 py-3 text-md font-semibold rounded-lg bg-red-600 hover:bg-red-700 transition"
             >
               <LogOut className="w-6 h-6 rotate-180" /> Sair

@@ -1,5 +1,5 @@
 import React from "react";
-import { Pencil, Trash } from "lucide-react";
+import { Pencil, Trash, Copy } from "lucide-react";
 
 export interface Funcionario {
   id: number;
@@ -7,6 +7,7 @@ export interface Funcionario {
   cpf: string;
   cargo: string;
   carga_horaria: number;
+  senha_inicial?: string;
 }
 
 interface Props {
@@ -15,18 +16,31 @@ interface Props {
   onDelete: (f: Funcionario) => void;
 }
 
-const FuncionariosCardList: React.FC<Props> = ({ funcionarios, onEdit, onDelete }) => {
+const FuncionariosCardList: React.FC<Props> = ({
+  funcionarios,
+  onEdit,
+  onDelete,
+}) => {
   return (
     <div className="md:hidden space-y-3">
       {funcionarios.map((f) => (
-        <div key={f.id} className="border border-gray-200 p-3 rounded-lg shadow-sm bg-gray-50">
+        <div
+          key={f.id}
+          className="border border-gray-200 p-3 rounded-lg shadow-sm bg-gray-50"
+        >
           <div className="flex justify-between items-center mb-1">
             <strong className="text-lg text-gray-800">{f.nome}</strong>
             <div className="flex gap-2">
-              <button onClick={() => onEdit(f)} className="text-blue-600 hover:text-blue-800 p-1">
+              <button
+                onClick={() => onEdit(f)}
+                className="text-blue-600 hover:text-blue-800 p-1"
+              >
                 <Pencil className="w-5 h-5" />
               </button>
-              <button onClick={() => onDelete(f)} className="text-red-600 hover:text-red-800 p-1">
+              <button
+                onClick={() => onDelete(f)}
+                className="text-red-600 hover:text-red-800 p-1"
+              >
                 <Trash className="w-5 h-5" />
               </button>
             </div>
@@ -38,7 +52,21 @@ const FuncionariosCardList: React.FC<Props> = ({ funcionarios, onEdit, onDelete 
             <span className="font-semibold">Cargo:</span> {f.cargo}
           </p>
           <p className="text-sm text-gray-600">
-            <span className="font-semibold">Carga Horária:</span> {f.carga_horaria}h/dia
+            <span className="font-semibold">Carga Horária:</span>{" "}
+            {f.carga_horaria}h/dia
+          </p>
+          <p className="text-sm text-gray-600">
+            <span className="font-semibold">Senha:</span>{" "}
+            {f.senha_inicial ? (
+              <button
+                onClick={() => navigator.clipboard.writeText(f.senha_inicial ?? "")}
+                className="text-gray-600 hover:text-gray-900 flex items-center gap-1"
+              >
+                <Copy className="w-4 h-4" /> Copiar
+              </button>
+            ) : (
+              "-"
+            )}
           </p>
         </div>
       ))}

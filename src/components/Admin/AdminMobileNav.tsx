@@ -1,6 +1,7 @@
 import React from 'react';
 import { UserCog, Library, LogOut } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { logout } from '../../api/authApi';
 
 interface AdminMobileNavProps {
   currentPage: 'funcionarios' | 'relatorios';
@@ -28,7 +29,7 @@ const AdminMobileNav: React.FC<AdminMobileNavProps> = ({ currentPage }) => {
         <Library className="w-5 h-5 mb-1" /> Relatórios
       </button>
       <button
-        onClick={() => navigate('/')}
+        onClick={() => logout()}
         className="flex flex-col items-center text-xs text-red-300 p-1"
       >
         <LogOut className="w-5 h-5 mb-1 rotate-180" /> Sair
