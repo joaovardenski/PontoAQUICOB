@@ -23,34 +23,34 @@ O projeto foi dividido em dois repositórios:
 - **Back-end:** https://github.com/joaovardenski/PontoAQUICOB-Back  
 
 ### 1️⃣ Clonar os repositórios
-git clone https://github.com/joaovardenski/PontoAQUICOB.git
-git clone https://github.com/joaovardenski/PontoAQUICOB-Back.git
+git clone https://github.com/joaovardenski/PontoAQUICOB.git <br>
+git clone https://github.com/joaovardenski/PontoAQUICOB-Back.git <br>
 
 ### 2️⃣ Instalar pacotes e iniciar os servidores
 
 #### Front-end
-cd PontoAQUICOB
-npm install
-npm run dev   # Inicia o servidor do front-end
+cd PontoAQUICOB <br>
+npm install <br>
+npm run dev   # Inicia o servidor do front-end <br>
 
 #### Back-end (Laravel)
-cd PontoAQUICOB-Back
-composer install        # Instala dependências do Laravel
-cp .env.example .env    # Copia arquivo de ambiente
-php artisan key:generate # Gera chave da aplicação
+cd PontoAQUICOB-Back <br>
+composer install        # Instala dependências do Laravel <br>
+cp .env.example .env    # Copia arquivo de ambiente <br>
+php artisan key:generate # Gera chave da aplicação <br>
 
 **Configurar banco de dados no `.env`** (MySQL):
 
-DB_CONNECTION=mysql
-DB_HOST=127.0.0.1
-DB_PORT=3306
-DB_DATABASE=nome_do_banco
-DB_USERNAME=usuario
-DB_PASSWORD=senha
+DB_CONNECTION=mysql <br>
+DB_HOST=127.0.0.1 <br>
+DB_PORT=3306 <br>
+DB_DATABASE=nome_do_banco <br>
+DB_USERNAME=usuario <br>
+DB_PASSWORD=senha <br>
 
-php artisan migrate                 # Executa migrations
-php artisan db:seed --class=UsersSeeder # Insere usuários iniciais
-php artisan serve                    # Inicia o servidor do back-end
+php artisan migrate                 # Executa migrations <br>
+php artisan db:seed --class=UsersSeeder # Insere usuários iniciais <br>
+php artisan serve                    # Inicia o servidor do back-end <br>
 
 **Usuários iniciais cadastrados via seeder:**
 
