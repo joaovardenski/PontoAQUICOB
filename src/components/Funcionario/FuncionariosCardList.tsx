@@ -1,12 +1,12 @@
 import React from "react";
 import { Pencil, Trash } from "lucide-react";
 
-interface Funcionario {
+export interface Funcionario {
   id: number;
   nome: string;
   cpf: string;
   cargo: string;
-  cargaHorariaDiaria: number;
+  carga_horaria: number;
 }
 
 interface Props {
@@ -38,7 +38,7 @@ const FuncionariosCardList: React.FC<Props> = ({ funcionarios, onEdit, onDelete 
             <span className="font-semibold">Cargo:</span> {f.cargo}
           </p>
           <p className="text-sm text-gray-600">
-            <span className="font-semibold">Carga Horária:</span> {f.cargaHorariaDiaria}h/dia
+            <span className="font-semibold">Carga Horária:</span> {f.carga_horaria}h/dia
           </p>
         </div>
       ))}

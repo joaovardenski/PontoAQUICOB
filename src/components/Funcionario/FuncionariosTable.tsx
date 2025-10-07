@@ -1,12 +1,12 @@
 import React from "react";
 import { Pencil, Trash } from "lucide-react";
 
-interface Funcionario {
+export interface Funcionario {
   id: number;
   nome: string;
   cpf: string;
   cargo: string;
-  cargaHorariaDiaria: number;
+  carga_horaria: number;
 }
 
 interface Props {
@@ -34,7 +34,7 @@ const FuncionariosTable: React.FC<Props> = ({ funcionarios, onEdit, onDelete }) 
               <td className="py-2 px-4">{f.nome}</td>
               <td className="py-2 px-4 whitespace-nowrap">{f.cpf}</td>
               <td className="py-2 px-4">{f.cargo}</td>
-              <td className="py-2 px-4 whitespace-nowrap">{f.cargaHorariaDiaria}h/dia</td>
+              <td className="py-2 px-4 whitespace-nowrap">{f.carga_horaria}h/dia</td>
               <td className="py-2 px-4 flex gap-2">
                 <button onClick={() => onEdit(f)} className="text-blue-600 hover:text-blue-800 p-1">
                   <Pencil className="w-5 h-5" />

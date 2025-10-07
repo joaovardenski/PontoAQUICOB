@@ -4,7 +4,7 @@ interface FuncionarioInfo {
   nome: string;
   cpf: string;
   cargo: string;
-  cargaHorariaDiaria: number;
+  carga_horaria: number;
 }
 
 interface ConfirmacaoFuncionarioModalProps {
@@ -47,7 +47,7 @@ const ConfirmacaoFuncionarioModal: React.FC<
               <strong>Cargo:</strong> {funcionario.cargo}
             </p>
             <p>
-              <strong>Carga Horária:</strong> {funcionario.cargaHorariaDiaria}h/dia
+              <strong>Carga Horária:</strong> {funcionario.carga_horaria}h/dia
             </p>
           </div>
         )}

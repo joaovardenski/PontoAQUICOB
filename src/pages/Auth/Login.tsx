@@ -6,6 +6,7 @@ import { validarLogin } from "../../utils/AuthValidators";
 import { formatarCPF } from "../../utils/MaskUtils";
 import AuthInputField from "../../components/Auth/AuthInputField";
 import AuthSubmitButton from "../../components/Auth/AuthSubmitButton";
+import axiosPublic from "../../api/axiosPublic";
 
 interface LoginFormData {
   cpf: string;
@@ -13,9 +14,8 @@ interface LoginFormData {
 }
 
 const ERROR_TIMEOUT = 8000;
-const LOGIN_DELAY = 2000;
 
-const useLoginForm = (onSuccess: () => void) => {
+const useLoginForm = (onSuccess: (user: any) => void) => {
   const [credentials, setCredentials] = useState<LoginFormData>({
     cpf: "",
     senha: "",
@@ -62,9 +62,32 @@ const useLoginForm = (onSuccess: () => void) => {
 
     setValidationErrors({});
     setIsLoading(true);
-    await new Promise((resolve) => setTimeout(resolve, LOGIN_DELAY));
-    setIsLoading(false);
-    onSuccess();
+
+    try {
+      const response = await axiosPublic.post("/login", {
+        cpf: credentials.cpf,
+        password: credentials.senha,
+      });
+
+      const { token, user } = response.data;
+
+      // Salva token e usuário no localStorage
+      localStorage.setItem("auth_token", token);
+      localStorage.setItem("user", JSON.stringify(user));
+
+      setIsLoading(false);
+
+      // Redireciona conforme tipo de usuário
+      onSuccess(user);
+    } catch (error: any) {
+      setIsLoading(false);
+      if (error.response?.status === 401) {
+        setValidationErrors({ senha: "CPF ou senha incorretos." });
+      } else {
+        setValidationErrors({ senha: "Erro ao conectar ao servidor." });
+        console.error("Erro ao logar:", error);
+      }
+    }
   };
 
   return {
@@ -89,7 +112,13 @@ const Login: React.FC = () => {
     handleInputChange,
     togglePasswordVisibility,
     handleLoginSubmit,
-  } = useLoginForm(() => navigate("/funcionario"));
+  } = useLoginForm((user) => {
+    if (user.tipo_usuario === "admin") {
+      navigate("/admin");
+    } else {
+      navigate("/funcionario");
+    }
+  });
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-[var(--color-fundo-claro)] p-4">
@@ -121,7 +150,9 @@ const Login: React.FC = () => {
               value={credentials.cpf}
               onChange={handleInputChange}
               placeholder="Seu CPF"
-              iconLeft={<User className="h-5 w-5 text-[var(--color-borda-suave)]" />}
+              iconLeft={
+                <User className="h-5 w-5 text-[var(--color-borda-suave)]" />
+              }
               error={validationErrors.cpf}
             />
 
@@ -132,9 +163,15 @@ const Login: React.FC = () => {
               value={credentials.senha}
               onChange={handleInputChange}
               placeholder="Sua senha"
-              iconLeft={<Lock className="h-5 w-5 text-[var(--color-borda-suave)]" />}
+              iconLeft={
+                <Lock className="h-5 w-5 text-[var(--color-borda-suave)]" />
+              }
               iconRight={
-                isPasswordVisible ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />
+                isPasswordVisible ? (
+                  <EyeOff className="h-5 w-5" />
+                ) : (
+                  <Eye className="h-5 w-5" />
+                )
               }
               onClickIconRight={togglePasswordVisibility}
               error={validationErrors.senha}

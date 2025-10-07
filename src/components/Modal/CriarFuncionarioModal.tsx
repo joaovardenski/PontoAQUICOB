@@ -7,13 +7,13 @@ interface CriarFuncionarioModalProps {
   onFechar: () => void;
   onSalvar: () => void;
   editando: boolean;
-  form: { nome: string; cpf: string; cargo: string; cargaHorariaDiaria: number };
+  form: { nome: string; cpf: string; cargo: string; carga_horaria: number };
   setForm: React.Dispatch<
     React.SetStateAction<{
       nome: string;
       cpf: string;
       cargo: string;
-      cargaHorariaDiaria: number;
+      carga_horaria: number;
     }>
   >;
   erros: string[];
@@ -105,13 +105,13 @@ const CriarFuncionarioModal: React.FC<CriarFuncionarioModalProps> = ({
             </label>
             <input
               type="number"
-              value={form.cargaHorariaDiaria}
+              value={form.carga_horaria}
               min={1}
               max={12}
               onChange={(e) =>
                 setForm({
                   ...form,
-                  cargaHorariaDiaria: Number(e.target.value),
+                  carga_horaria: Number(e.target.value),
                 })
               }
               className="border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 transition"

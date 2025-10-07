@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { PlusCircle, Search, Menu } from "lucide-react";
 
 // Componentes
@@ -9,6 +9,13 @@ import AdminMobileNav from "../../components/Admin/AdminMobileNav";
 import CriarFuncionarioModal from "../../components/Modal/CriarFuncionarioModal";
 import ConfirmacaoFuncionarioModal from "../../components/Modal/ConfirmacaoFuncionarioModal";
 
+import {
+  getFuncionarios,
+  createFuncionario,
+  updateFuncionario,
+  deleteFuncionario,
+} from "../../api/funcionariosApi";
+
 // Utilitários
 import { validarFuncionario } from "../../utils/FuncionariosValidators";
 
@@ -17,7 +24,7 @@ export interface Funcionario {
   nome: string;
   cpf: string;
   cargo: string;
-  cargaHorariaDiaria: number;
+  carga_horaria: number;
 }
 
 type ConfirmationAction = "save" | "delete" | null;
@@ -36,21 +43,31 @@ const CadastroFuncionarios: React.FC = () => {
     nome: "",
     cpf: "",
     cargo: "",
-    cargaHorariaDiaria: 8,
+    carga_horaria: 8,
   });
   const [errors, setErrors] = useState<string[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
+  useEffect(() => {
+    const carregarFuncionarios = async () => {
+      try {
+        const data = await getFuncionarios();
+        setFuncionarios(data);
+      } catch (error) {
+        console.error("Erro ao carregar funcionários:", error);
+      }
+    };
+    carregarFuncionarios();
+  }, []);
 
   const cleanCpf = (cpf: string) => cpf.replace(/\D/g, "");
 
   const isCpfDuplicate = (cpf: string, id?: number) =>
     funcionarios.some((f) => cleanCpf(f.cpf) === cleanCpf(cpf) && f.id !== id);
 
-  const filteredFuncionarios = funcionarios.filter(
-    (f) =>
-      f.nome.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      cleanCpf(f.cpf).includes(cleanCpf(searchTerm))
+  const filteredFuncionarios = funcionarios.filter((f) =>
+    f.nome.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   const openCadastroModal = (func?: Funcionario) => {
@@ -60,11 +77,11 @@ const CadastroFuncionarios: React.FC = () => {
         nome: func.nome,
         cpf: func.cpf,
         cargo: func.cargo,
-        cargaHorariaDiaria: func.cargaHorariaDiaria,
+        carga_horaria: func.carga_horaria,
       });
     } else {
       setSelectedFuncionario(null);
-      setForm({ nome: "", cpf: "", cargo: "", cargaHorariaDiaria: 8 });
+      setForm({ nome: "", cpf: "", cargo: "", carga_horaria: 8 });
     }
     setErrors([]);
     setIsCadastroModalOpen(true);
@@ -106,10 +123,9 @@ const CadastroFuncionarios: React.FC = () => {
       return;
     }
 
-    const funcToSave: Funcionario = selectedFuncionario
+    const funcToSave: Funcionario | null = selectedFuncionario
       ? { ...selectedFuncionario, ...form }
-      : { id: Date.now(), ...form };
-
+      : null; // novo funcionário ainda não tem ID
     setSelectedFuncionario(funcToSave);
 
     openConfirmacaoModal(
@@ -117,30 +133,44 @@ const CadastroFuncionarios: React.FC = () => {
         ? "Deseja realmente alterar este funcionário?"
         : "Deseja realmente cadastrar este funcionário?",
       "save",
-      funcToSave
+      funcToSave ?? undefined
     );
   };
 
-  const saveFuncionario = () => {
-    if (!selectedFuncionario) return;
-
-    const isEdit = funcionarios.some((f) => f.id === selectedFuncionario.id);
-
-    if (isEdit) {
-      setFuncionarios((prev) =>
-        prev.map((f) =>
-          f.id === selectedFuncionario.id ? selectedFuncionario : f
-        )
-      );
-      closeCadastroModal();
-      openConfirmacaoModal("Funcionário alterado com sucesso!", null);
+  const saveFuncionario = async () => {
+    if (!selectedFuncionario) {
+      // Novo funcionário
+      try {
+        await createFuncionario({
+          nome: form.nome,
+          cpf: form.cpf,
+          cargo: form.cargo,
+          carga_horaria: form.carga_horaria,
+        });
+        openConfirmacaoModal("Funcionário cadastrado com sucesso!", null);
+      } catch (error) {
+        console.error("Erro ao criar funcionário:", error);
+        openConfirmacaoModal("Erro ao criar funcionário!", null);
+      }
     } else {
-      setFuncionarios((prev) => [...prev, selectedFuncionario]);
-      closeCadastroModal();
-      openConfirmacaoModal("Funcionário cadastrado com sucesso!", null);
+      // Edição
+      try {
+        await updateFuncionario(selectedFuncionario.id, {
+          nome: form.nome,
+          cpf: cleanCpf(form.cpf),
+          cargo: form.cargo,
+          carga_horaria: form.carga_horaria,
+        });
+        openConfirmacaoModal("Funcionário alterado com sucesso!", null);
+      } catch (error) {
+        console.error("Erro ao atualizar funcionário:", error);
+        openConfirmacaoModal("Erro ao atualizar funcionário!", null);
+      }
     }
 
-    setErrors([]);
+    closeCadastroModal();
+    const data = await getFuncionarios();
+    setFuncionarios(data);
   };
 
   const requestDeleteFuncionario = (func: Funcionario) => {
@@ -151,20 +181,25 @@ const CadastroFuncionarios: React.FC = () => {
     );
   };
 
-  const confirmAction = () => {
-    if (confirmationAction === "save") saveFuncionario();
-    else if (confirmationAction === "delete" && selectedFuncionario) {
-      setFuncionarios((prev) =>
-        prev.filter((f) => f.id !== selectedFuncionario.id)
-      );
-      openConfirmacaoModal("Funcionário excluído com sucesso!", null);
+  const confirmAction = async () => {
+    if (confirmationAction === "save") {
+      await saveFuncionario();
+    } else if (confirmationAction === "delete" && selectedFuncionario) {
+      try {
+        await deleteFuncionario(selectedFuncionario.id);
+        openConfirmacaoModal("Funcionário excluído com sucesso!", null);
+        const data = await getFuncionarios();
+        setFuncionarios(data);
+      } catch (error) {
+        console.error("Erro ao excluir funcionário:", error);
+        openConfirmacaoModal("Erro ao excluir funcionário!", null);
+      }
     }
     closeConfirmacaoModal();
   };
 
   return (
     <div className="flex flex-col md:flex-row min-h-screen bg-[var(--color-fundo-claro)]">
-
       <header className="md:hidden sticky top-0 bg-[var(--color-azul-primario)] text-white p-4 flex justify-between items-center z-20">
         <h1 className="text-xl font-bold">Cadastro de Funcionários</h1>
         <button onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}>
@@ -253,7 +288,7 @@ const CadastroFuncionarios: React.FC = () => {
                 nome: selectedFuncionario.nome,
                 cpf: selectedFuncionario.cpf,
                 cargo: selectedFuncionario.cargo,
-                cargaHorariaDiaria: selectedFuncionario.cargaHorariaDiaria,
+                carga_horaria: selectedFuncionario.carga_horaria,
               }
             : undefined
         }
