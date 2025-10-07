@@ -7,7 +7,6 @@ import {
   Clock,
   LogOut,
 } from "lucide-react";
-import { useNavigate } from "react-router-dom";
 
 import { useClock } from "../../hooks/useClock";
 import { usePontos } from "../../hooks/usePontos";
@@ -23,7 +22,6 @@ import { logout } from "../../api/authApi";
 import { capitalizarPrimeiraLetra } from "../../utils/StringUtils";
 
 const DashboardFuncionario: React.FC = () => {
-  const navigate = useNavigate();
   const { horaAtual, dataAtual } = useClock();
   const { registros, adicionarPonto, setRegistrosDoDia, horasTrabalhadas } =
     usePontos();
