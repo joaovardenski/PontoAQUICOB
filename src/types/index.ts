@@ -1,7 +1,7 @@
 export interface Funcionario {
   id: number;
   nome: string;
-  cargaHorariaDiaria: number;
+  carga_horaria: number;
 }
 
 export interface Marcacao {

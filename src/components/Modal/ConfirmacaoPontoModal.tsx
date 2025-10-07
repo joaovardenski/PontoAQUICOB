@@ -6,7 +6,7 @@ interface ModalConfirmacaoPontoProps {
   onClose: () => void;
   onConfirm: () => void;
   message: string;
-  tipo?: "Entrada" | "Saida" | "Pausa" | null;
+  tipo?: "entrada" | "saida" | "pausa" | null;
 }
 
 const ModalConfirmacaoPonto: React.FC<ModalConfirmacaoPontoProps> = ({
@@ -20,11 +20,11 @@ const ModalConfirmacaoPonto: React.FC<ModalConfirmacaoPontoProps> = ({
 
   const getIcon = () => {
     switch (tipo) {
-      case "Entrada":
+      case "entrada":
         return <CheckCircle className="w-14 h-14 text-green-600 mb-3" />;
-      case "Pausa":
+      case "pausa":
         return <Coffee className="w-14 h-14 text-yellow-500 mb-3" />;
-      case "Saida":
+      case "saida":
         return <XCircle className="w-14 h-14 text-red-600 mb-3" />;
       default:
         return null;
@@ -50,9 +50,9 @@ const ModalConfirmacaoPonto: React.FC<ModalConfirmacaoPontoProps> = ({
           <button
             onClick={onConfirm}
             className={`px-5 py-2 rounded-lg font-medium text-white transition-all ${
-              tipo === "Entrada"
+              tipo === "entrada"
                 ? "bg-green-600 hover:bg-green-700"
-                : tipo === "Pausa"
+                : tipo === "pausa"
                 ? "bg-yellow-500 hover:bg-yellow-600"
                 : "bg-red-600 hover:bg-red-700"
             }`}

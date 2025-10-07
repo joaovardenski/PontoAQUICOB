@@ -49,6 +49,7 @@ const CadastroFuncionarios: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
+  /** ---------- Efeitos ---------- */
   useEffect(() => {
     const carregarFuncionarios = async () => {
       try {
@@ -61,6 +62,7 @@ const CadastroFuncionarios: React.FC = () => {
     carregarFuncionarios();
   }, []);
 
+  /** ---------- Funções auxiliares ---------- */
   const cleanCpf = (cpf: string) => cpf.replace(/\D/g, "");
 
   const isCpfDuplicate = (cpf: string, id?: number) =>
@@ -68,11 +70,9 @@ const CadastroFuncionarios: React.FC = () => {
 
   const filteredFuncionarios = funcionarios.filter((f) => {
     const termo = searchTerm.toLowerCase().trim();
-
     if (!termo) return true;
 
     const apenasNumeros = termo.replace(/\D/g, "");
-
     return (
       f.nome.toLowerCase().includes(termo) ||
       (apenasNumeros.length > 0 &&
@@ -80,6 +80,7 @@ const CadastroFuncionarios: React.FC = () => {
     );
   });
 
+  /** ---------- Modais ---------- */
   const openCadastroModal = (func?: Funcionario) => {
     if (func) {
       setSelectedFuncionario(func);
@@ -121,6 +122,7 @@ const CadastroFuncionarios: React.FC = () => {
     setSelectedFuncionario(null);
   };
 
+  /** ---------- Ações ---------- */
   const requestSaveFuncionario = () => {
     const validationErrors = validarFuncionario(form);
 
@@ -135,7 +137,8 @@ const CadastroFuncionarios: React.FC = () => {
 
     const funcToSave: Funcionario | null = selectedFuncionario
       ? { ...selectedFuncionario, ...form }
-      : null; // novo funcionário ainda não tem ID
+      : null;
+
     setSelectedFuncionario(funcToSave);
 
     openConfirmacaoModal(
@@ -208,8 +211,10 @@ const CadastroFuncionarios: React.FC = () => {
     closeConfirmacaoModal();
   };
 
+  /** ---------- Render ---------- */
   return (
     <div className="flex flex-col md:flex-row min-h-screen bg-[var(--color-fundo-claro)]">
+      {/* Header Mobile */}
       <header className="md:hidden sticky top-0 bg-[var(--color-azul-primario)] text-white p-4 flex justify-between items-center z-20">
         <h1 className="text-xl font-bold">Cadastro de Funcionários</h1>
         <button onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}>
@@ -217,17 +222,17 @@ const CadastroFuncionarios: React.FC = () => {
         </button>
       </header>
 
-      <div className="flex flex-1">
-        <AdminSidebar
-          isMobileMenuOpen={isMobileMenuOpen}
-          setIsMobileMenuOpen={setIsMobileMenuOpen}
-          currentPage="funcionarios"
-        />
+      {/* Sidebar */}
+      <AdminSidebar
+        isMobileMenuOpen={isMobileMenuOpen}
+        setIsMobileMenuOpen={setIsMobileMenuOpen}
+        currentPage="funcionarios"
+      />
 
+      {/* Main Content */}
+      <div className="flex flex-1">
         <main className="flex-1 p-6 md:p-8 pb-20 md:pb-8">
-          <h1 className="hidden md:block text-3xl font-bold mb-6">
-            Funcionários
-          </h1>
+          <h1 className="hidden md:block text-3xl font-bold mb-6">Funcionários</h1>
 
           <button
             onClick={() => openCadastroModal()}
@@ -279,6 +284,7 @@ const CadastroFuncionarios: React.FC = () => {
         <AdminMobileNav currentPage="funcionarios" />
       </div>
 
+      {/* Modais */}
       <CriarFuncionarioModal
         aberto={isCadastroModalOpen}
         onFechar={closeCadastroModal}

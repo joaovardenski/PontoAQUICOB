@@ -16,6 +16,7 @@ import RegistroButton from "../../components/Funcionario/RegistroButton";
 import ModalConfirmacaoPonto from "../../components/Modal/ConfirmacaoPontoModal";
 import FeedbackModal from "../../components/Modal/FeedbackModal";
 import axiosPrivate from "../../api/axiosPrivate";
+import { capitalizarPrimeiraLetra } from "../../utils/StringUtils";
 
 const DashboardFuncionario: React.FC = () => {
   const navigate = useNavigate();
@@ -43,10 +44,10 @@ const DashboardFuncionario: React.FC = () => {
       const registrosDoDia: Ponto[] = response.data.map((r: any) => {
         const tipoTxt = String(r.tipo || "").toLowerCase();
         const tipo = tipoTxt.includes("entrada")
-          ? "Entrada"
+          ? "entrada"
           : tipoTxt.includes("pausa")
-          ? "Pausa"
-          : "Saida";
+          ? "pausa"
+          : "saida";
 
         const horario = new Date(r.datahora).toLocaleTimeString("pt-BR", {
           hour: "2-digit",
@@ -72,20 +73,19 @@ const DashboardFuncionario: React.FC = () => {
   }, []);
 
   const podeRegistrar = (tipo: Ponto["tipo"]) => {
-    const tipoDesejado = tipo.toLowerCase().replace("á", "a");
-    const ultimo = registros[0]?.tipo?.toLowerCase().replace("á", "a");
+    const ultimo = registros[0]?.tipo
 
-    if (!ultimo) return tipoDesejado === "entrada";
+    if (!ultimo) return tipo === "entrada";
 
     if (ultimo.includes("saida")) return false;
 
-    if (ultimo === tipoDesejado) return false;
+    if (ultimo === tipo) return false;
 
     if (ultimo.includes("entrada"))
-      return tipoDesejado === "pausa" || tipoDesejado === "saida";
+      return tipo === "pausa" || tipo === "saida";
 
     if (ultimo.includes("pausa"))
-      return tipoDesejado === "entrada" || tipoDesejado === "saida";
+      return tipo === "entrada" || tipo === "saida";
 
     return false;
   };
@@ -97,7 +97,7 @@ const DashboardFuncionario: React.FC = () => {
         message: `Não é possível registrar um ponto de ${tipo} neste momento. A ordem esperada é ${
           registros.length === 0
             ? "ENTRADA"
-            : registros[0].tipo === "Entrada"
+            : registros[0].tipo === "entrada"
             ? "PAUSA ou SAÍDA"
             : "ENTRADA ou SAÍDA"
         }.`,
@@ -212,22 +212,22 @@ const DashboardFuncionario: React.FC = () => {
                   label="Entrada"
                   icon={CheckCircle}
                   color="green"
-                  onClick={() => abrirConfirmacaoPonto("Entrada")}
-                  disabled={loading || !podeRegistrar("Entrada")}
+                  onClick={() => abrirConfirmacaoPonto("entrada")}
+                  disabled={loading || !podeRegistrar("entrada")}
                 />
                 <RegistroButton
                   label="Pausa"
                   icon={Coffee}
                   color="yellow"
-                  onClick={() => abrirConfirmacaoPonto("Pausa")}
-                  disabled={loading || !podeRegistrar("Pausa")}
+                  onClick={() => abrirConfirmacaoPonto("pausa")}
+                  disabled={loading || !podeRegistrar("pausa")}
                 />
                 <RegistroButton
                   label="Saída"
                   icon={XCircle}
                   color="red"
-                  onClick={() => abrirConfirmacaoPonto("Saida")}
-                  disabled={loading || !podeRegistrar("Saida")}
+                  onClick={() => abrirConfirmacaoPonto("saida")}
+                  disabled={loading || !podeRegistrar("saida")}
                 />
               </div>
             )}
@@ -261,7 +261,7 @@ const DashboardFuncionario: React.FC = () => {
                   >
                     <div className="flex items-center gap-3">
                       {getIcon(ponto.tipo)}
-                      <span className="font-medium">{ponto.tipo}</span>
+                      <span className="font-medium">{capitalizarPrimeiraLetra(ponto.tipo)}</span>
                     </div>
                     <span className="font-mono text-gray-600">
                       {ponto.horario}

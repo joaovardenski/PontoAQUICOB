@@ -1,37 +1,24 @@
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { UserCog, Library, LogOut, Menu } from "lucide-react";
-import AquicobLogo from "../../assets/aquicobLogo.png";
+import React, { useState, useEffect } from "react";
+import { Menu } from "lucide-react";
+import jsPDF from "jspdf";
+import "jspdf-autotable";
 
-import type { DiaMarcacoes, Funcionario, Marcacao } from "../../types";
-import { gerarRelatorio } from "../../utils/RelatorioUtils";
+import type { DiaMarcacoes, Funcionario } from "../../types";
 import RelatorioFilters from "../../components/Relatorio/RelatorioFilters";
 import RelatorioTable from "../../components/Relatorio/RelatorioTable";
 import RelatorioCards from "../../components/Relatorio/RelatorioCards";
 import FeedbackModal from "../../components/Modal/FeedbackModal";
+import AdminSidebar from "../../components/Admin/AdminSideBar";
+import AdminMobileNav from "../../components/Admin/AdminMobileNav";
+
+import { calcularHorasDia } from "../../utils/RelatorioUtils";
+
+import { getFuncionarios } from "../../api/funcionariosApi";
+import { gerarRelatorioAPI } from "../../api/relatoriosApi";
+import autoTable from "jspdf-autotable";
 
 const RelatoriosAdmin: React.FC = () => {
-  const navigate = useNavigate();
-
-  const [funcionarios] = useState<Funcionario[]>([
-    { id: 1, nome: "João", cargaHorariaDiaria: 8 },
-    { id: 2, nome: "Maria", cargaHorariaDiaria: 6 },
-    { id: 3, nome: "Pedro", cargaHorariaDiaria: 8 },
-  ]);
-
-  const [batidas] = useState<Marcacao[]>([
-    { id: 1, funcionarioId: 1, data: "2025-10-02", hora: "08:59", tipo: "E" },
-    { id: 2, funcionarioId: 1, data: "2025-10-02", hora: "12:03", tipo: "P" },
-    { id: 3, funcionarioId: 1, data: "2025-10-02", hora: "13:01", tipo: "E" },
-    { id: 4, funcionarioId: 1, data: "2025-10-02", hora: "17:04", tipo: "S" },
-    { id: 5, funcionarioId: 2, data: "2025-10-02", hora: "09:10", tipo: "E" },
-    { id: 6, funcionarioId: 2, data: "2025-10-02", hora: "12:05", tipo: "P" },
-    { id: 7, funcionarioId: 2, data: "2025-10-02", hora: "13:07", tipo: "E" },
-    { id: 8, funcionarioId: 2, data: "2025-10-02", hora: "17:00", tipo: "S" },
-    { id: 9, funcionarioId: 2, data: "2025-10-03", hora: "13:07", tipo: "E" },
-    { id: 10, funcionarioId: 2, data: "2025-10-03", hora: "17:00", tipo: "S" },
-  ]);
-
+  const [funcionarios, setFuncionarios] = useState<Funcionario[]>([]);
   const [funcionarioSelecionado, setFuncionarioSelecionado] =
     useState<string>("");
   const [startDate, setStartDate] = useState<string>("");
@@ -49,7 +36,26 @@ const RelatoriosAdmin: React.FC = () => {
     type: "success" | "error";
   } | null>(null);
 
-  const handleGerarRelatorio = () => {
+  /** ---------- Effects ---------- */
+  useEffect(() => {
+    // Busca os funcionários do back-end ao montar o componente
+    const fetchFuncionarios = async () => {
+      try {
+        const data = await getFuncionarios();
+        setFuncionarios(data);
+      } catch (error: unknown) {
+        setFeedback({
+          message: "Erro ao carregar funcionários.",
+          type: "error",
+        });
+      }
+    };
+
+    fetchFuncionarios();
+  }, []);
+
+  /** ---------- Funções ---------- */
+  const handleGerarRelatorio = async () => {
     if (!funcionarioSelecionado || !startDate || !endDate) {
       setFeedback({
         message: "Selecione um funcionário e o período para gerar o relatório.",
@@ -68,17 +74,26 @@ const RelatoriosAdmin: React.FC = () => {
     const funcionarioObj =
       funcionarios.find((f) => f.nome === funcionarioSelecionado) || null;
 
-    const { relatorioPorDia, totalPeriodo } = gerarRelatorio({
-      batidas,
-      funcionario: funcionarioObj,
-      periodo: { start: startDate, end: endDate },
-    });
+    if (!funcionarioObj) {
+      setFeedback({ message: "Funcionário não encontrado.", type: "error" });
+      return;
+    }
 
-    setRelatorioGerado({
-      funcionario: funcionarioObj,
-      relatorioPorDia,
-      totalPeriodo,
-    });
+    try {
+      const { relatorioPorDia, totalPeriodo } = await gerarRelatorioAPI({
+        funcionarioId: funcionarioObj.id,
+        startDate,
+        endDate,
+      });
+
+      setRelatorioGerado({
+        funcionario: funcionarioObj,
+        relatorioPorDia,
+        totalPeriodo,
+      });
+    } catch (error: unknown) {
+      setFeedback({ message: "Erro ao gerar relatório.", type: "error" });
+    }
   };
 
   const handleLimparRelatorio = () => {
@@ -88,8 +103,50 @@ const RelatoriosAdmin: React.FC = () => {
     setRelatorioGerado(null);
   };
 
+  const handleExportPDF = () => {
+    if (!relatorioGerado) return;
+
+    const doc = new jsPDF();
+
+    // Cabeçalho
+    doc.setFontSize(16);
+    doc.text(`Relatório de ${relatorioGerado.funcionario?.nome}`, 14, 20);
+    doc.setFontSize(12);
+    doc.text(`Período: ${startDate} até ${endDate}`, 14, 28);
+    doc.text(
+      `Meta diária: ${relatorioGerado.funcionario?.carga_horaria ?? 8}h`,
+      14,
+      36
+    );
+
+    // Tabela de registros
+    const tableData = relatorioGerado.relatorioPorDia.map((d) => [
+      d.data.split("-").reverse().join("/"),
+      d.batidas.map((b) => `${b.hora} ${b.tipo}`).join(", "),
+      calcularHorasDia(d.batidas),
+    ]);
+
+    autoTable(doc, {
+      head: [["Dia", "Batidas", "Horas"]],
+      body: tableData,
+      startY: 45,
+    });
+
+    // Total do período
+    const finalY = (doc as any).lastAutoTable?.finalY ?? 60;
+    doc.text(
+      `Total no período: ${relatorioGerado.totalPeriodo}`,
+      14,
+      finalY + 10
+    );
+
+    doc.save(`Relatorio_${relatorioGerado.funcionario?.nome}.pdf`);
+  };
+
+  /** ---------- Render ---------- */
   return (
     <div className="flex flex-col min-h-screen bg-[var(--color-fundo-claro)]">
+      {/* Header Mobile */}
       <header className="md:hidden sticky top-0 bg-[var(--color-azul-primario)] text-white p-4 flex justify-between items-center z-20">
         <h1 className="text-xl font-bold">Relatórios Admin</h1>
         <button onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}>
@@ -98,59 +155,13 @@ const RelatoriosAdmin: React.FC = () => {
       </header>
 
       <div className="flex flex-1">
-        <aside
-          className={`fixed inset-y-0 left-0 z-30 w-64 bg-[var(--color-azul-primario)] text-white flex-col justify-between transition-transform duration-300 ease-in-out ${
-            isMobileMenuOpen ? "translate-x-0" : "-translate-x-full"
-          } md:translate-x-0 md:relative md:flex`}
-        >
-          {isMobileMenuOpen && (
-            <div
-              className="fixed inset-0 bg-black opacity-50 md:hidden z-20"
-              onClick={() => setIsMobileMenuOpen(false)}
-            />
-          )}
+        <AdminSidebar
+          isMobileMenuOpen={isMobileMenuOpen}
+          setIsMobileMenuOpen={setIsMobileMenuOpen}
+          currentPage="relatorios"
+        />
 
-          <div className="flex flex-col h-full">
-            <div className="flex items-center justify-center p-6">
-              <img
-                src={AquicobLogo}
-                alt="AQUICOB"
-                className="h-20 w-auto rounded-lg bg-white p-2"
-              />
-            </div>
-            <nav className="flex flex-col mt-6 flex-grow">
-              <button
-                onClick={() => {
-                  navigate("/admin");
-                  setIsMobileMenuOpen(false);
-                }}
-                className="flex items-center gap-3 px-6 py-3 text-md font-semibold rounded-lg mb-2 hover:bg-blue-800 transition"
-              >
-                <UserCog className="w-6 h-6" />
-                Funcionários
-              </button>
-              <button
-                onClick={() => {
-                  navigate("/admin/relatorios");
-                  setIsMobileMenuOpen(false);
-                }}
-                className="flex items-center gap-3 px-6 py-3 text-md font-semibold bg-blue-900 rounded-lg mb-2 hover:bg-blue-800 transition"
-              >
-                <Library className="w-6 h-6" />
-                Relatórios
-              </button>
-            </nav>
-            <div className="p-6 mt-auto">
-              <button
-                onClick={() => navigate("/")}
-                className="flex items-center justify-center w-full gap-3 px-6 py-3 text-md font-semibold rounded-lg bg-red-600 hover:bg-red-700 transition"
-              >
-                <LogOut className="w-6 h-6 rotate-180" /> Sair
-              </button>
-            </div>
-          </div>
-        </aside>
-
+        {/* Main Content */}
         <main className="flex-1 p-6 md:p-8 pb-20 md:pb-8">
           <h1 className="hidden md:block text-3xl font-bold mb-6">
             Relatório de Ponto
@@ -174,9 +185,7 @@ const RelatoriosAdmin: React.FC = () => {
                 Relatório gerado para:{" "}
                 <strong>{relatorioGerado.funcionario?.nome}</strong> — meta
                 diária:{" "}
-                <strong>
-                  {relatorioGerado.funcionario?.cargaHorariaDiaria}h
-                </strong>
+                <strong>{relatorioGerado.funcionario?.carga_horaria}h</strong>
               </p>
 
               <RelatorioTable
@@ -191,7 +200,11 @@ const RelatoriosAdmin: React.FC = () => {
               <p className="mt-4 font-semibold">
                 Total no período: {relatorioGerado.totalPeriodo}
               </p>
-              <button className="mt-4 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg shadow-md font-semibold">
+
+              <button
+                onClick={handleExportPDF}
+                className="mt-4 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg shadow-md font-semibold"
+              >
                 Exportar PDF
               </button>
             </div>
@@ -202,27 +215,10 @@ const RelatoriosAdmin: React.FC = () => {
           )}
         </main>
 
-        <nav className="fixed bottom-0 left-0 right-0 bg-[var(--color-azul-primario)] text-white flex justify-around py-2 md:hidden shadow-lg z-20">
-          <button
-            onClick={() => navigate("/admin")}
-            className="flex flex-col items-center text-xs p-1"
-          >
-            <UserCog className="w-5 h-5 mb-1" /> Funcionários
-          </button>
-          <button
-            onClick={() => navigate("/admin/relatorios")}
-            className="flex flex-col items-center text-xs text-blue-200 p-1"
-          >
-            <Library className="w-5 h-5 mb-1" /> Relatórios
-          </button>
-          <button
-            onClick={() => navigate("/")}
-            className="flex flex-col items-center text-xs text-red-300 p-1"
-          >
-            <LogOut className="w-5 h-5 mb-1 rotate-180" /> Sair
-          </button>
-        </nav>
+        <AdminMobileNav currentPage="relatorios" />
       </div>
+
+      {/* Feedback Modal */}
       {feedback && (
         <FeedbackModal
           isOpen={!!feedback}
